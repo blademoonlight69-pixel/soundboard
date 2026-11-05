@@ -1,10 +1,12 @@
 {
   "name": "soundboard-desktop-companion",
   "version": "1.0.0",
-  "description": "MiniSoundboard Gaming Edition — Windows Global Hotkey Companion",
+  "description": "MiniSoundboard Gaming Edition - Windows Global Hotkey Companion",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack:win": "electron-builder --win dir",
+    "dist:win": "electron-builder --win nsis"
   },
   "keywords": [
     "soundboard",
@@ -15,7 +17,44 @@
   ],
   "author": "MiniSoundboard Team",
   "license": "ISC",
-  "dependencies": {
-    "electron": "32.3.3"
+  "dependencies": {},
+"devDependencies": {
+  "electron": "32.3.3",
+  "electron-builder": "25.1.8",
+  "png-to-ico": "^3.0.2"
+},
+  "build": {
+    "appId": "com.minisoundboard.companion",
+    "productName": "MiniSoundboard Companion",
+    "directories": {
+      "output": "dist"
+    },
+   "files": [
+  "main.js",
+  "renderer.js",
+  "index.html",
+  "tray-icon.png",
+  "icon.ico",
+  "package.json"
+],
+   "win": {
+  "icon": "icon.ico",
+  "target": [
+    {
+      "target": "nsis",
+      "arch": [
+        "x64"
+      ]
+    }
+  ]
+},
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MiniSoundboard Companion"
+    }
   }
 }

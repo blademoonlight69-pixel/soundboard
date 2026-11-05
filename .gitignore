@@ -29,3 +29,6 @@ Thumbs.db
 
 /desktop-companion/test.js
 /desktop-companion/test2.js
+
+# Desktop Companion build output
+/desktop-companion/dist/
