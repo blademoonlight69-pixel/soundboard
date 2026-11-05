@@ -64,6 +64,10 @@
                     <span>Hotkey Manager</span>
                 </a>
 
+                <a href="https://github.com/blademoonlight69-pixel/soundboard/releases/download/v1.0.0/MiniSoundboard.Companion.Setup.1.0.0.exe" class="nav-link" style="color: var(--accent-green);" target="_blank" rel="noopener noreferrer">
+                    <span class="nav-icon">⬇️</span>
+                    <span>Download Windows App</span>
+                </a>
                 @if(auth()->user()->isAdmin())
                     <div class="nav-section-title" style="margin-top: 24px; color: var(--accent-purple);">Admin Panel</div>
                     
