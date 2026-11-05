@@ -65,7 +65,9 @@ class SoundboardFeaturesTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $mySound = Sound::create([
+
+
+$sound = Sound::create([
             'user_id'            => $user->id,
             'title'              => 'My Personal Private Sound',
             'file_path'          => 'sounds/my.mp3',
@@ -214,5 +216,86 @@ class SoundboardFeaturesTest extends TestCase
         // Stranger tries to play owner's private sound
         $response = $this->actingAs($stranger)->get("/sounds/{$privateSound->id}/play");
         $response->assertStatus(403);
+    }
+
+    public function test_stop_all_hotkey_defaults_to_end_for_users(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user)->get('/hotkeys')
+            ->assertStatus(200)
+            ->assertSee('End')
+            ->assertSee('Hotkey Stop All Bawaan Sistem');
+    }
+
+    public function test_user_can_update_and_reset_stop_all_hotkey(): void
+    {
+        $user = User::factory()->create();
+
+        // Update Stop All to F12
+        $response = $this->actingAs($user)->post('/hotkeys/stop-all', [
+            'stop_all_hotkey' => 'F12',
+        ]);
+        $response->assertSessionHas('success');
+        $this->assertEquals('F12', $user->fresh()->settings->stop_all_hotkey);
+
+        // Reset back to default 'End'
+        $response = $this->actingAs($user)->post('/hotkeys/stop-all/reset');
+        $response->assertSessionHas('success');
+        $this->assertEquals('End', $user->fresh()->settings->stop_all_hotkey);
+    }
+
+       public function test_prevent_conflict_between_stop_all_and_sound_hotkey(): void
+    {
+        $user = User::factory()->create();
+
+        $user->settings()->create([
+            'master_volume' => 80,
+            'theme' => 'dark',
+            'stop_all_hotkey' => 'End',
+        ]);
+
+        $sound = Sound::create([
+            'user_id'            => $user->id,
+            'title'              => 'Test SFX',
+            'file_path'          => 's.mp3',
+            'file_name_original' => 's.mp3',
+            'status'             => 'public',
+        ]);
+
+        // Tombol End tidak boleh digunakan untuk hotkey suara.
+        $response = $this->actingAs($user)->post('/hotkeys', [
+            'sound_id'  => $sound->id,
+            'key_combo' => 'End',
+        ]);
+
+        $response->assertSessionHas('error');
+
+        $this->assertDatabaseMissing('hotkeys', [
+            'user_id'   => $user->id,
+            'key_combo' => 'End',
+        ]);
+
+        // Tombol Q boleh digunakan untuk hotkey suara.
+        $this->actingAs($user)->post('/hotkeys', [
+            'sound_id'  => $sound->id,
+            'key_combo' => 'Q',
+        ]);
+
+        $this->assertDatabaseHas('hotkeys', [
+            'user_id'   => $user->id,
+            'key_combo' => 'Q',
+        ]);
+
+        // Tombol Q tidak boleh digunakan untuk Stop All.
+        $response = $this->actingAs($user)->post('/hotkeys/stop-all', [
+            'stop_all_hotkey' => 'Q',
+        ]);
+
+        $response->assertSessionHas('error');
+
+        $this->assertEquals(
+            'End',
+            $user->fresh()->settings->stop_all_hotkey
+        );
     }
 }

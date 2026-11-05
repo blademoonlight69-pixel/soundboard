@@ -1,0 +1,21 @@
+{
+  "name": "soundboard-desktop-companion",
+  "version": "1.0.0",
+  "description": "MiniSoundboard Gaming Edition — Windows Global Hotkey Companion",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "soundboard",
+    "global-hotkey",
+    "roblox",
+    "gaming",
+    "audio"
+  ],
+  "author": "MiniSoundboard Team",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "32.3.3"
+  }
+}

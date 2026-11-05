@@ -74,11 +74,12 @@ class AuthController extends Controller
         ]);
 
         // Buat baris settings default untuk user baru
-        // (volume 80, tema dark)
+        // (volume 80, tema dark, stop all hotkey 'End')
         UserSetting::create([
-            'user_id'       => $user->id,
-            'master_volume' => 80,
-            'theme'         => 'dark',
+            'user_id'         => $user->id,
+            'master_volume'   => 80,
+            'theme'           => 'dark',
+            'stop_all_hotkey' => 'End',
         ]);
 
         // Login otomatis setelah registrasi berhasil
@@ -148,9 +149,10 @@ class AuthController extends Controller
         // Pastikan user memiliki settings (untuk akun lama sebelum fitur ini dibuat)
         if (! $user->settings) {
             UserSetting::create([
-                'user_id'       => $user->id,
-                'master_volume' => 80,
-                'theme'         => 'dark',
+                'user_id'         => $user->id,
+                'master_volume'   => 80,
+                'theme'           => 'dark',
+                'stop_all_hotkey' => 'End',
             ]);
         }
 

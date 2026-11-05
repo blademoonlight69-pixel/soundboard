@@ -58,6 +58,9 @@
         <div style="background: var(--bg-glass); border: 1px solid var(--border); padding: 12px 16px; border-radius: var(--radius-md); font-size: 13px; color: var(--accent-purple);">
             ✓ Master Volume Default: <strong>{{ auth()->user()->settings->master_volume ?? 80 }}%</strong>
         </div>
+        <div style="background: var(--bg-glass); border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px 16px; border-radius: var(--radius-md); font-size: 13px; color: #fca5a5;">
+            ⏹️ Hotkey Stop All: <strong>[{{ auth()->user()->settings->stop_all_hotkey ?? 'End' }}]</strong>
+        </div>
     </div>
 </div>
 

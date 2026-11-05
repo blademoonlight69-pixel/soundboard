@@ -13,6 +13,9 @@
 
     <!-- CSS Design System -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <meta name="theme-color" content="#060611">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ asset('icons/icon-192x192.png') }}">
 </head>
 <body>
     <div class="auth-layout">
@@ -41,5 +44,18 @@
             @yield('content')
         </div>
     </div>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('{{ asset('sw.js') }}').then(function(reg) {
+                    console.log('[PWA] Service Worker aktif:', reg.scope);
+                }).catch(function(err) {
+                    console.warn('[PWA] Service Worker gagal dimuat:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>

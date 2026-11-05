@@ -12,7 +12,16 @@ class UserSetting extends Model
         'user_id',
         'master_volume',
         'theme',
+        'stop_all_hotkey',
     ];
+
+    /**
+     * Pastikan stop_all_hotkey selalu memiliki nilai default 'End'
+     */
+    public function getStopAllHotkeyAttribute(?string $value): string
+    {
+        return !empty($value) ? trim($value) : 'End';
+    }
 
     protected function casts(): array
     {

@@ -22,3 +22,10 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Desktop Companion
+/desktop-companion/node_modules/
+*.backup
+
+/desktop-companion/test.js
+/desktop-companion/test2.js

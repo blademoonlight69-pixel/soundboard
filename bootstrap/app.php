@@ -11,6 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Kecualikan endpoint API Desktop Companion dari verifikasi CSRF token
+        $middleware->validateCsrfTokens(except: [
+            'api/desktop/*',
+        ]);
+
         // Daftarkan alias untuk middleware kustom agar bisa digunakan di route
         // Penggunaan: Route::middleware(['auth', 'active', 'admin'])->group(...)
         $middleware->alias([

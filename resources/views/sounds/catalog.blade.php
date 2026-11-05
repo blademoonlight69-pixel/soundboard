@@ -8,7 +8,7 @@
 <!-- Filter & Pencarian Bar -->
 <div class="card mb-24" style="padding: 18px 24px;">
     <form method="GET" action="{{ route('sounds.catalog') }}" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-        <div style="display: flex; gap: 10px; flex: 1; min-width: 260px; max-width: 450px;">
+        <div style="display: flex; gap: 10px; flex: 1 1 240px; max-width: 100%;">
             <div class="search-bar" style="width: 100%;">
                 <span class="search-icon">🔍</span>
                 <input 
@@ -22,8 +22,8 @@
             <button type="submit" class="btn btn-primary btn-sm">Cari</button>
         </div>
 
-        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-            <select name="category" class="form-control" style="width: 170px;" onchange="this.form.submit()">
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; flex: 1 1 auto;">
+            <select name="category" class="form-control" style="flex: 1 1 140px; min-width: 130px;" onchange="this.form.submit()">
                 <option value="">Semua Kategori</option>
                 @foreach($categories as $category)
                     <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
@@ -32,7 +32,7 @@
                 @endforeach
             </select>
 
-            <select name="sort" class="form-control" style="width: 150px;" onchange="this.form.submit()">
+            <select name="sort" class="form-control" style="flex: 1 1 120px; min-width: 110px;" onchange="this.form.submit()">
                 <option value="latest" {{ $sort === 'latest' ? 'selected' : '' }}>Terbaru</option>
                 <option value="popular" {{ $sort === 'popular' ? 'selected' : '' }}>Paling Populer</option>
                 <option value="title" {{ $sort === 'title' ? 'selected' : '' }}>Nama (A-Z)</option>
@@ -144,9 +144,9 @@
     </div>
 
     <div class="player-controls">
-        <button type="button" class="btn btn-danger btn-sm" onclick="stopAllAudio()" title="Hentikan Semua Audio (Stop All)">
+        <button type="button" class="btn btn-danger btn-sm" onclick="stopAllAudio()" title="Hentikan Semua Audio (Stop All [{{ auth()->user()->settings->stop_all_hotkey ?? 'End' }}])">
             <span>⏹️</span>
-            <span>Stop All</span>
+            <span>Stop All [{{ auth()->user()->settings->stop_all_hotkey ?? 'End' }}]</span>
         </button>
     </div>
 
@@ -222,73 +222,21 @@
 </div>
 
 <script>
-    let currentAudio = null;
-    let currentSoundId = null;
-    let masterVolume = (document.getElementById('master-volume-slider')?.value || 80) / 100;
-
-    function playAudio(soundId, audioUrl, title) {
-        // Jika suara yang sama sedang diputar, stop
-        if (currentSoundId === soundId && currentAudio && !currentAudio.paused) {
-            stopAllAudio();
-            return;
+    window.SOUNDBOARD_CONFIG = {
+        stopAllHotkey: "{{ addslashes(auth()->user()->settings->stop_all_hotkey ?? 'End') }}",
+        masterVolume: {{ auth()->user()->settings->master_volume ?? 80 }},
+        hotkeys: {
+            @foreach(auth()->user()->hotkeys()->with('sound')->get() as $hk)
+                @if($hk->sound)
+                    "{{ strtoupper(trim($hk->key_combo)) }}": {
+                        id: {{ $hk->sound->id }},
+                        url: "{{ route('sounds.play', $hk->sound) }}",
+                        title: "{{ addslashes($hk->sound->title) }}"
+                    },
+                @endif
+            @endforeach
         }
-
-        // Hentikan audio sebelumnya
-        stopAllAudio();
-
-        const playerBar = document.getElementById('global-player-bar');
-        const playerTitle = document.getElementById('player-title');
-        const playerStatus = document.getElementById('player-status');
-        const playBtn = document.getElementById('play-btn-' + soundId);
-        const soundCard = document.getElementById('sound-card-' + soundId);
-
-        currentAudio = new Audio(audioUrl);
-        currentAudio.volume = masterVolume;
-        currentSoundId = soundId;
-
-        if (playBtn) playBtn.innerHTML = '⏸';
-        if (soundCard) soundCard.classList.add('playing');
-        if (playerBar) playerBar.style.display = 'flex';
-        if (playerTitle) playerTitle.textContent = title;
-        if (playerStatus) playerStatus.textContent = 'Sedang memutar...';
-
-        currentAudio.play().catch(err => {
-            console.error('Playback error:', err);
-            if (playerStatus) playerStatus.textContent = 'Gagal memutar audio';
-            stopAllAudio();
-        });
-
-        currentAudio.onended = () => {
-            stopAllAudio();
-            if (playerStatus) playerStatus.textContent = 'Selesai';
-        };
-    }
-
-    function stopAllAudio() {
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-            currentAudio = null;
-        }
-
-        if (currentSoundId) {
-            const playBtn = document.getElementById('play-btn-' + currentSoundId);
-            const soundCard = document.getElementById('sound-card-' + currentSoundId);
-            if (playBtn) playBtn.innerHTML = '▶';
-            if (soundCard) soundCard.classList.remove('playing');
-            currentSoundId = null;
-        }
-
-        const playerStatus = document.getElementById('player-status');
-        if (playerStatus) playerStatus.textContent = 'Dihentikan (Stop All)';
-    }
-
-    function changeMasterVolume(val) {
-        masterVolume = val / 100;
-        document.getElementById('volume-label').textContent = val + '%';
-        if (currentAudio) {
-            currentAudio.volume = masterVolume;
-        }
-    }
+    };
 </script>
+<script src="{{ asset('js/soundboard-player.js') }}"></script>
 @endsection

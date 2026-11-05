@@ -32,6 +32,10 @@ use Illuminate\Support\Facades\Route;
 // ROUTE PUBLIK — Tidak memerlukan login
 // ============================================================
 
+// Desktop Companion API (Mendukung Login & Sync via HMAC Token)
+Route::post('/api/desktop/login', [\App\Http\Controllers\HotkeyController::class, 'desktopLogin'])->name('api.desktop.login');
+Route::get('/api/desktop/hotkeys', [\App\Http\Controllers\HotkeyController::class, 'apiDesktopSync'])->name('api.desktop.hotkeys');
+Route::get('/api/desktop/sounds/{sound}/play', [\App\Http\Controllers\HotkeyController::class, 'playDesktopSound'])->name('api.desktop.sounds.play');
 // Halaman utama: redirect ke dashboard jika sudah login, atau ke login jika belum
 Route::get('/', function () {
     if (Auth::check()) {
@@ -92,10 +96,14 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/favorites', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('favorites');
     Route::post('/sounds/{sound}/favorite', [\App\Http\Controllers\FavoriteController::class, 'toggle'])->name('sounds.favorite');
 
-    // 4. Hotkey Manager
+    // 4. Hotkey Manager & Stop All Settings
     Route::get('/hotkeys', [\App\Http\Controllers\HotkeyController::class, 'index'])->name('hotkeys');
     Route::post('/hotkeys', [\App\Http\Controllers\HotkeyController::class, 'store'])->name('hotkeys.store');
     Route::delete('/hotkeys/{hotkey}', [\App\Http\Controllers\HotkeyController::class, 'destroy'])->name('hotkeys.destroy');
+    Route::post('/hotkeys/stop-all', [\App\Http\Controllers\HotkeyController::class, 'updateStopAll'])->name('hotkeys.stop-all.update');
+    Route::post('/hotkeys/stop-all/reset', [\App\Http\Controllers\HotkeyController::class, 'resetStopAll'])->name('hotkeys.stop-all.reset');
+
+
 
     // ──────────────────────────────────────────────────────────
     // ROUTE ADMIN — Hanya untuk role admin

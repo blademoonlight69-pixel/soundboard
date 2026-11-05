@@ -1390,6 +1390,41 @@ textarea.form-control:focus {
 /* ============================================================
    RESPONSIVE — MOBILE & TABLET
    ============================================================ */
+/* ============================================================
+   RESPONSIVE — MOBILE & TABLET
+   ============================================================ */
+.sidebar-close-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.sidebar-close-btn:hover {
+    color: #fff;
+    background: var(--bg-glass-hover);
+}
+
+.topbar-desktop {
+    height: 60px;
+    background: rgba(8, 8, 20, 0.95);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    backdrop-filter: blur(15px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: all var(--transition-fast);
+}
+
 @media (max-width: 1024px) {
     .sounds-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1397,10 +1432,18 @@ textarea.form-control:focus {
 }
 
 @media (max-width: 768px) {
-    /* Sembunyikan sidebar, tampilkan topbar */
+    /* Tampilkan tombol tutup di sidebar */
+    .sidebar-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Sembunyikan sidebar ke kiri di mobile, tampilkan via transformasi */
     .sidebar {
         transform: translateX(-100%);
-        z-index: 200;
+        z-index: 300;
+        box-shadow: 10px 0 40px rgba(0, 0, 0, 0.8);
     }
 
     .sidebar.open {
@@ -1412,6 +1455,7 @@ textarea.form-control:focus {
         opacity: 0;
         pointer-events: none;
         transition: opacity var(--transition-normal);
+        z-index: 250;
     }
 
     .sidebar-overlay.active {
@@ -1419,66 +1463,189 @@ textarea.form-control:focus {
         pointer-events: auto;
     }
 
-    .topbar {
-        display: flex;
+    .topbar-desktop {
+        padding: 0 16px;
+        height: 56px;
     }
 
     .hamburger {
-        display: flex;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 245, 255, 0.1);
+        border: 1px solid rgba(0, 245, 255, 0.3);
+        color: var(--accent-cyan);
+        width: 38px;
+        height: 38px;
+        border-radius: var(--radius-md);
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .hamburger:hover {
+        background: rgba(0, 245, 255, 0.2);
+        box-shadow: 0 0 10px rgba(0, 245, 255, 0.4);
     }
 
     .main-content {
         margin-left: 0;
+        padding-bottom: 90px; /* Jarak aman agar konten tidak tertutup fixed player bar */
     }
 
     .page-header {
-        padding: 20px 16px 0;
+        padding: 16px 16px 0;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .page-subtitle {
+        font-size: 12px;
     }
 
     .page-content {
-        padding: 16px;
+        padding: 14px 16px;
     }
 
-    /* Player bar menyesuaikan lebar layar */
+    /* Player bar membentang penuh di HP */
     .player-bar {
-        left: 0;
+        left: 0 !important;
+        height: 64px;
+        padding: 0 14px;
+        gap: 10px;
+        z-index: 200;
     }
 
-    /* Padding bawah untuk player bar */
-    .main-content {
-        padding-bottom: 80px;
+    .player-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 16px;
+    }
+
+    .player-name {
+        font-size: 12px;
+        max-width: 140px;
+    }
+
+    .player-status {
+        font-size: 10px;
+    }
+
+    .player-volume {
+        display: none; /* Sembunyikan slider volume horizontal di HP untuk ruang Stop All */
+    }
+
+    .player-controls .btn {
+        padding: 8px 12px;
+        font-size: 12px;
     }
 
     .sounds-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+
+    .sound-card {
+        padding: 12px;
+    }
+
+    .sound-card-title {
+        font-size: 13px;
+    }
+
+    .btn-play {
+        width: 44px; /* Touch target nyaman */
+        height: 44px;
+        font-size: 16px;
     }
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 14px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .stat-label {
+        font-size: 11px;
     }
 
     .auth-card {
-        padding: 28px 24px;
+        padding: 24px 20px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .table th, .table td {
+        padding: 10px 12px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 640px) {
+    .topbar-title-desktop {
+        display: none !important;
+    }
+
+    .topbar-username {
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .btn-logout-text {
+        display: none;
     }
 }
 
 @media (max-width: 480px) {
     .sounds-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .sound-card {
+        padding: 10px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .player-bar {
+        padding: 0 10px;
+        gap: 8px;
+    }
+
+    .player-name {
+        max-width: 110px;
+    }
+}
+
+@media (max-width: 360px) {
+    .sounds-grid {
+        grid-template-columns: 1fr;
     }
 
     .stats-grid {
         grid-template-columns: 1fr;
-    }
-
-    .player-bar {
-        padding: 0 12px;
-        gap: 10px;
-    }
-
-    .player-volume {
-        display: none;
     }
 }
 

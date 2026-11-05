@@ -30,9 +30,9 @@
             value="{{ request('search') }}" 
             placeholder="Cari nama atau email..." 
             class="form-control" 
-            style="max-width: 280px;"
+            style="flex: 1 1 200px; max-width: 100%;"
         >
-        <select name="role" class="form-control" style="max-width: 180px;">
+        <select name="role" class="form-control" style="flex: 1 1 140px; max-width: 100%;">
             <option value="">Semua Role</option>
             <option value="super_admin" {{ request('role') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
             <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>

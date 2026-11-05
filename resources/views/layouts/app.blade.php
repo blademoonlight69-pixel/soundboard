@@ -14,19 +14,25 @@
     <!-- CSS Design System -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#060611">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ asset('icons/icon-192x192.png') }}">
 </head>
 <body>
     <div class="app-layout">
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
-                <a href="{{ route('dashboard') }}" class="brand-logo">
-                    <div class="brand-icon">🎮</div>
-                    <div>
-                        <div class="brand-name">MiniSoundboard</div>
-                        <div class="brand-tagline">Gaming Edition</div>
-                    </div>
-                </a>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <a href="{{ route('dashboard') }}" class="brand-logo">
+                        <div class="brand-icon">🎮</div>
+                        <div>
+                            <div class="brand-name">MiniSoundboard</div>
+                            <div class="brand-tagline">Gaming Edition</div>
+                        </div>
+                    </a>
+                    <button type="button" class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('active');" aria-label="Tutup Menu">✕</button>
+                </div>
             </div>
 
             <nav class="sidebar-nav">
@@ -108,17 +114,17 @@
 
         <!-- MAIN CONTENT AREA -->
         <main class="main-content">
-            <!-- Topbar (Tersedia di semua viewport: memuat profil ringkas & tombol Logout cepat) -->
-            <header class="topbar-desktop" style="height: 60px; background: rgba(8, 8, 20, 0.95); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 50;">
+            <!-- Topbar (Tersedia di semua viewport: memuat navigasi hamburger mobile, profil ringkas & Logout) -->
+            <header class="topbar-desktop">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <button type="button" class="hamburger" id="hamburger-toggle" onclick="document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('active');" style="display: none;">☰</button>
-                    <span style="font-family: var(--font-display); font-size: 13px; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase;">MiniSoundboard Gaming Arena</span>
+                    <button type="button" class="hamburger" id="hamburger-toggle" onclick="document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('active');" aria-label="Buka Navigasi Mobile">☰</button>
+                    <span style="font-family: var(--font-display); font-size: 13px; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase;" class="topbar-title-desktop">MiniSoundboard Gaming Arena</span>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);">
                         <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); display: inline-block;"></span>
-                        <strong style="color: white;">{{ auth()->user()->name }}</strong>
+                        <strong style="color: white;" class="topbar-username">{{ auth()->user()->name }}</strong>
                         <span class="badge {{ auth()->user()->isSuperAdmin() ? 'badge-admin' : (auth()->user()->isExactAdmin() ? 'badge-admin' : 'badge-user') }} badge-sm">
                             {{ auth()->user()->isSuperAdmin() ? 'SUPER ADMIN' : (auth()->user()->isExactAdmin() ? 'ADMIN' : 'GAMER') }}
                         </span>
@@ -126,9 +132,9 @@
 
                     <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                         @csrf
-                        <button type="submit" class="btn btn-ghost btn-sm" style="border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; background: rgba(239, 68, 68, 0.08); padding: 5px 14px; font-size: 12px; gap: 6px;">
+                        <button type="submit" class="btn btn-ghost btn-sm" style="border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; background: rgba(239, 68, 68, 0.08); padding: 5px 12px; font-size: 12px; gap: 6px;">
                             <span>🚪</span>
-                            <span>Logout</span>
+                            <span class="btn-logout-text">Logout</span>
                         </button>
                     </form>
                 </div>
@@ -159,5 +165,17 @@
             </div>
         </main>
     </div>
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('{{ asset('sw.js') }}').then(function(reg) {
+                    console.log('[PWA] Service Worker aktif:', reg.scope);
+                }).catch(function(err) {
+                    console.warn('[PWA] Service Worker gagal dimuat:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
