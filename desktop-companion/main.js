@@ -28,8 +28,10 @@ function createWindow() {
 
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-    // Buka Developer Tools untuk melihat error audio
+    // Developer Tools hanya aktif saat pengembangan lokal
+if (!app.isPackaged) {
     mainWindow.webContents.openDevTools();
+}
 
     // Jangan matikan app saat ditutup, sembunyikan ke System Tray agar hotkey tetap aktif saat main Roblox
     mainWindow.on('close', (event) => {
