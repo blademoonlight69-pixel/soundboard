@@ -115,6 +115,19 @@
                     <span>Oleh: {{ $sound->user->name ?? 'Anonim' }}</span>
                     <span>{{ $sound->file_size_human }}</span>
                 </div>
+                @if (auth()->user()->isAdmin())
+                    <div style="margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px;">
+                        <form method="POST" action="{{ route('sounds.destroy', $sound) }}"
+                              onsubmit="return confirm('Yakin ingin menghapus suara {{ addslashes($sound->title) }} secara permanen?')">
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit" class="btn btn-danger btn-sm" style="width: 100%;">
+                                🗑️ Hapus Suara
+                            </button>
+                        </form>
+                    </div>
+                @endif
             </div>
         @endforeach
     </div>
